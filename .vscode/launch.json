@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "bun",
+      "internalConsoleOptions": "neverOpen",
+      "request": "launch",
+      "name": "Debug solve script",
+      "program": "${workspaceFolder}/scripts/solve.ts",
+      "args": ["${fileBasenameNoExtension}"],
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": false,
+      "watchMode": true
+    }
+  ]
+}

@@ -3,7 +3,8 @@
   "module": "scripts/main.ts",
   "type": "module",
   "scripts": {
-    "solve": "bun --watch ./scripts/solve.ts"
+    "solve": "bun --watch ./scripts/solve.ts",
+    "debug": "bun --inspect ./scripts/solve.ts"
   },
   "devDependencies": {
     "bun-types": "latest",

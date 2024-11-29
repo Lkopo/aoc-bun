@@ -1,0 +1,6 @@
+{
+  "[typescript]": {
+    "files.insertFinalNewline": true
+  },
+  "files.insertFinalNewline": false
+}
