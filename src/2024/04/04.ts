@@ -1,4 +1,3 @@
-import { unzip } from 'lodash'
 import { isBetween } from 'scripts/utils'
 
 export function parse(input: string) {
@@ -6,18 +5,39 @@ export function parse(input: string) {
 }
 
 export function partOne(input: ReturnType<typeof parse>) {
-  const leftRight = input.map(signs => signs.join(''))
-  const topDown = unzip(input).map(signs => signs.join(''))
-  const rightLeft = mirrorMatrix(leftRight)
-  const topDownReversed = unzip(rightLeft.map(line => line.split(''))).map(
-    signs => signs.join('')
-  )
+  const directions: [number, number][] = [
+    [1, 0],
+    [0, 1],
+    [-1, 0],
+    [0, -1],
+    [1, 1],
+    [1, -1],
+    [-1, 1],
+    [-1, -1]
+  ]
+  const search = 'XMAS'
 
-  return findOccurrences(
-    leftRight,
-    topDown,
-    diagonalValues(topDown),
-    diagonalValues(topDownReversed)
+  return input.reduce(
+    (total, signs, idx) => {
+      let matches = 0
+      signs.forEach((sign, i) => {
+        if (sign !== 'X') {
+          return
+        }
+        directions.forEach(([x, y]) => {
+          let word = 'X'
+          let pos = 0
+          let next = [idx + x, i + y]
+          while (++pos < 4 && input[next[0]!]?.[next[1]!] === search[pos]) {
+            word += input[next[0]!]![next[1]!]
+            next[0]! += x
+            next[1]! += y
+          }
+          matches += Number(word === search)
+        })
+      })
+      return total + matches
+    }, 0
   )
 }
 
@@ -40,37 +60,4 @@ export function partTwo(input: ReturnType<typeof parse>) {
       }).length
     )
   }, 0)
-}
-
-function mirrorMatrix(input: string[]): string[] {
-  return input.map(line => line.split('').reverse().join(''))
-}
-
-function diagonalValues(input: string[]): string[] {
-  const values = []
-  const length = input.length
-  for (let i = 3; i < length; ++i) {
-    let signs = input[0]![i]!
-    for (let j = i - 1; j >= 0; --j) {
-      signs += input[i - j]![j]!
-    }
-    values.push(signs)
-  }
-  for (let i = 1; i < length - 3; ++i) {
-    let signs = input[i]![length - 1]!
-    for (let j = length - 2; j >= 0 && i + length - j - 1 < length; --j) {
-      signs += input[i + length - j - 1]![j]!
-    }
-    values.push(signs)
-  }
-  return values
-}
-
-function findOccurrences(...inputs: string[][]): number {
-  return inputs
-    .flat()
-    .reduce(
-      (total, line) => total + (line.match(/(?=(XMAS|SAMX))/g)?.length ?? 0),
-      0
-    )
 }
