@@ -1,13 +1,10 @@
 export function parse(input: string) {
   const splitInput = input.split('\n\n')
-  const rules = splitInput[0]!.split('\n').reduce(
-    (rules, rule) => {
-      const [before, after] = rule.split('|').map(Number) as [number, number]
-      ;(rules[before!] ??= []).push(after!)
-      return rules
-    },
-    {} as Record<number, number[]>
-  )
+  const rules = splitInput[0]!.split('\n').reduce((rules, rule) => {
+    const [before, after] = rule.split('|').map(Number) as [number, number]
+    rules.set(before!, [...(rules.get(before!) || []), after!])
+    return rules
+  }, new Map<number, number[]>())
   const updates = splitInput[1]!
     .split('\n')
     .map(line => line.split(',').map(Number))
@@ -37,14 +34,12 @@ const middlePage = (pages: number[]): number =>
   pages[Math.floor(pages.length / 2)]!
 
 function arePagesValid(
-  rules: Record<number, number[]>,
+  rules: Map<number, number[]>,
   updatePages: number[]
 ): boolean {
   return updatePages.every(
     (page, idx) =>
       idx === 0 ||
-      !rules[page]?.some(prevPage =>
-        updatePages.slice(0, idx).includes(prevPage)
-      )
+      !rules.get(page)?.some(nextPage => updatePages[idx - 1] === nextPage)
   )
 }
