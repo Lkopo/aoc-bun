@@ -17,28 +17,26 @@ export function partOne(input: ReturnType<typeof parse>) {
   ]
   const search = 'XMAS'
 
-  return input.reduce(
-    (total, signs, idx) => {
-      let matches = 0
-      signs.forEach((sign, i) => {
-        if (sign !== 'X') {
-          return
+  return input.reduce((total, signs, idx) => {
+    let matches = 0
+    signs.forEach((sign, i) => {
+      if (sign !== 'X') {
+        return
+      }
+      directions.forEach(([x, y]) => {
+        let word = 'X'
+        let pos = 0
+        let next = [idx + x, i + y]
+        while (++pos < 4 && input[next[0]!]?.[next[1]!] === search[pos]) {
+          word += input[next[0]!]![next[1]!]
+          next[0]! += x
+          next[1]! += y
         }
-        directions.forEach(([x, y]) => {
-          let word = 'X'
-          let pos = 0
-          let next = [idx + x, i + y]
-          while (++pos < 4 && input[next[0]!]?.[next[1]!] === search[pos]) {
-            word += input[next[0]!]![next[1]!]
-            next[0]! += x
-            next[1]! += y
-          }
-          matches += Number(word === search)
-        })
+        matches += Number(word === search)
       })
-      return total + matches
-    }, 0
-  )
+    })
+    return total + matches
+  }, 0)
 }
 
 export function partTwo(input: ReturnType<typeof parse>) {
