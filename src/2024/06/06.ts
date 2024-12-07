@@ -2,8 +2,8 @@ import { isBetween } from 'scripts/utils'
 
 export function parse(input: string) {
   const map = input.split('\n').map(line => line.split(''))
-  const y = map.findIndex(row => row.includes('^'));
-  const startPos: Coords = [map[y]!.indexOf('^'), y];
+  const y = map.findIndex(row => row.includes('^'))
+  const startPos: Coords = [map[y]!.indexOf('^'), y]
   return { map, startPos }
 }
 
