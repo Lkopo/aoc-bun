@@ -12,7 +12,7 @@ export function partOne(input: ReturnType<typeof parse>) {
   const symbols = ['+', '*']
   return input.reduce(
     (total, { value, numbers }) =>
-      calculate(symbols, numbers[0]!, numbers.slice(1)).has(value)
+      getResults(symbols, numbers[0]!, numbers, 1, new Set()).has(value)
         ? total + value
         : total,
     0
@@ -23,7 +23,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
   const symbols = ['+', '*', '||']
   return input.reduce(
     (total, { value, numbers }) =>
-      calculate(symbols, numbers[0]!, numbers.slice(1)).has(value)
+      getResults(symbols, numbers[0]!, numbers, 1, new Set()).has(value)
         ? total + value
         : total,
     0
@@ -33,25 +33,25 @@ export function partTwo(input: ReturnType<typeof parse>) {
 const compute: Record<string, (left: number, right: number) => number> = {
   '+': (left, right) => left + right,
   '*': (left, right) => left * right,
-  '||': (left, right) => parseInt(left.toString() + right.toString())
+  '||': (left, right) => left * 10 ** Math.floor(Math.log10(right) + 1) + right
 }
 
-function calculate(
+function getResults(
   symbols: string[],
   left: number,
   rightValues: number[],
-  index: number = 0,
-  results: Set<number> = new Set()
+  idx: number,
+  results: Set<number>
 ): Set<number> {
-  if (index === rightValues.length) {
+  if (idx === rightValues.length) {
     results.add(left)
     return results
   }
 
-  symbols.forEach(symbol => {
-    const value = compute[symbol]!(left, rightValues[index]!)
-    calculate(symbols, value, rightValues, index + 1, results)
-  })
+  for (const symbol of symbols) {
+    const value = compute[symbol]!(left, rightValues[idx]!)
+    getResults(symbols, value, rightValues, idx + 1, results)
+  }
 
   return results
 }
