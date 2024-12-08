@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "solve": "bun --watch ./scripts/solve.ts",
-    "debug": "bun --inspect ./scripts/solve.ts"
+    "pretty": "bun prettier . --write"
   },
   "devDependencies": {
     "bun-types": "latest",
