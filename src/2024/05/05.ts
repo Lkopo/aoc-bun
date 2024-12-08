@@ -40,6 +40,8 @@ function arePagesValid(
   return updatePages.every(
     (page, idx) =>
       idx === 0 ||
-      !rules.get(page)?.some(nextPage => updatePages[idx - 1] === nextPage)
+      !rules
+        .get(page)
+        ?.some(nextPage => updatePages.slice(0, idx).includes(nextPage))
   )
 }
