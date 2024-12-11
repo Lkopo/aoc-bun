@@ -1,3 +1,5 @@
+import { sum } from '@/utils'
+
 export function parse(input: string) {
   return input
     .split(' ')
@@ -16,7 +18,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
 }
 
 function countStones(stonesMap: Map<string, number>, blinks: number): number {
-  let total = stonesMap.values().reduce((total, count) => total + count, 0)
+  let total = stonesMap.values().reduce(sum)
   for (let i = 0; i < blinks; ++i) {
     const entries = [...stonesMap.entries()]
     entries.forEach(([value, count]) => {
@@ -25,7 +27,7 @@ function countStones(stonesMap: Map<string, number>, blinks: number): number {
         ? stonesMap.delete(value)
         : stonesMap.set(value, currentDiff)
       if (value === '0') {
-        stonesMap.set('1', (stonesMap.get('1') || 0) + count)
+        appendMapKey(stonesMap, '1', count)
       } else if (value.length % 2 === 0) {
         const length = value.length / 2
         const [left, right] = [

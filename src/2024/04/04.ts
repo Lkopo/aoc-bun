@@ -1,20 +1,10 @@
-import { isBetween } from 'scripts/utils'
+import { directions8, isBetween, toCharGrid } from '@/utils'
 
 export function parse(input: string) {
-  return input.split('\n').map(line => line.split(''))
+  return toCharGrid(input)
 }
 
 export function partOne(input: ReturnType<typeof parse>) {
-  const directions: [number, number][] = [
-    [1, 0],
-    [0, 1],
-    [-1, 0],
-    [0, -1],
-    [1, 1],
-    [1, -1],
-    [-1, 1],
-    [-1, -1]
-  ]
   const search = 'XMAS'
 
   return input.reduce((total, signs, idx) => {
@@ -23,7 +13,7 @@ export function partOne(input: ReturnType<typeof parse>) {
       if (sign !== 'X') {
         return
       }
-      directions.forEach(([x, y]) => {
+      directions8.forEach(([x, y]) => {
         let word = 'X'
         let pos = 0
         let next = [idx + x, i + y]

@@ -1,7 +1,7 @@
-import { isBetween } from 'scripts/utils'
+import { isBetween, toNumGrid } from '@/utils'
 
 export function parse(input: string) {
-  return input.split('\n').map(line => line.match(/\d+/g)!.map(Number))
+  return toNumGrid(input)
 }
 
 export function partOne(input: ReturnType<typeof parse>) {

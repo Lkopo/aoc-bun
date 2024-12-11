@@ -1,4 +1,4 @@
-import { isBetween } from 'scripts/utils'
+import { areCoordsValid, Coords, getCoordsKey } from '@/utils'
 
 export function parse(input: string) {
   const lines = input.split('\n')
@@ -20,7 +20,7 @@ export function partOne(input: ReturnType<typeof parse>) {
       coordsList.forEach((coordsB, idxB) => {
         if (idxA !== idxB) {
           const oppositeCoords = getOppositeCoords(coordsA, coordsB)
-          if (isValidCoords(oppositeCoords, input.size)) {
+          if (areCoordsValid(oppositeCoords, input.size)) {
             antiNodes.add(getCoordsKey(oppositeCoords))
           }
         }
@@ -39,7 +39,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
         if (idxA !== idxB) {
           let [first, second] = [coordsA, coordsB]
           let oppositeCoords = getOppositeCoords(first, second)
-          while (isValidCoords(oppositeCoords, input.size)) {
+          while (areCoordsValid(oppositeCoords, input.size)) {
             antiNodes.add(getCoordsKey(oppositeCoords))
             second = first
             first = oppositeCoords
@@ -52,14 +52,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
   return antiNodes.size
 }
 
-type Coords = [number, number]
-
 const getOppositeCoords = (a: Coords, b: Coords): Coords => [
   a[0] + a[0] - b[0],
   a[1] + a[1] - b[1]
 ]
-
-const isValidCoords = (coords: Coords, size: number): boolean =>
-  isBetween(coords[0], [0, size]) && isBetween(coords[1], [0, size])
-
-const getCoordsKey = (coords: Coords): string => `${coords[0]}:${coords[1]}`

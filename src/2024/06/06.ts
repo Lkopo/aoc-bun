@@ -1,7 +1,16 @@
-import { isBetween } from 'scripts/utils'
+import {
+  areCoordsSame,
+  areCoordsValid,
+  Coords,
+  Direction,
+  getCoordsDirKey,
+  getCoordsKey,
+  moveCoords,
+  toCharGrid
+} from '@/utils'
 
 export function parse(input: string) {
-  const map = input.split('\n').map(line => line.split(''))
+  const map = toCharGrid(input)
   const y = map.findIndex(row => row.includes('^'))
   const startPos: Coords = [map[y]!.indexOf('^'), y]
   return { map, startPos }
@@ -9,12 +18,12 @@ export function parse(input: string) {
 
 export function partOne(input: ReturnType<typeof parse>) {
   const size = input.map.length - 1
-  const visited: Set<string> = new Set([getPosKey(input.startPos)])
-  let direction: Coords = [0, -1]
+  const visited: Set<string> = new Set([getCoordsKey(input.startPos)])
+  let direction: Direction = [0, -1]
   let next = input.startPos
   while (true) {
-    const nextPos = move(next, direction)
-    if (!isValidPos(nextPos, size)) {
+    const nextPos = moveCoords(next, direction)
+    if (!areCoordsValid(nextPos, size)) {
       break
     }
     const item = input.map[nextPos[1]]![nextPos[0]]
@@ -22,7 +31,7 @@ export function partOne(input: ReturnType<typeof parse>) {
       direction = turnRight(direction)
     } else {
       next = nextPos
-      visited.add(getPosKey(nextPos))
+      visited.add(getCoordsKey(nextPos))
     }
   }
   return visited.size
@@ -32,28 +41,35 @@ export function partTwo(input: ReturnType<typeof parse>) {
   const obstacles: Map<string, boolean> = new Map()
   const size = input.map.length - 1
   let next = input.startPos
-  let direction: Coords = [0, -1]
+  let direction: Direction = [0, -1]
   while (true) {
-    const nextPos = move(next, direction)
-    if (!isValidPos(nextPos, size)) {
+    const nextPos = moveCoords(next, direction)
+    if (!areCoordsValid(nextPos, size)) {
       break
     }
     const item = input.map[nextPos[1]]![nextPos[0]]
     if (item === '#') {
       direction = turnRight(direction)
     } else {
-      const nextPosKey = getPosKey(nextPos)
-      if (!arePosSame(input.startPos, nextPos) && !obstacles.has(nextPosKey)) {
+      const nextPosKey = getCoordsKey(nextPos)
+      if (
+        !areCoordsSame(input.startPos, nextPos) &&
+        !obstacles.has(nextPosKey)
+      ) {
         obstacles.set(nextPosKey, isLoop(input.map, next, direction))
       }
       next = nextPos
     }
   }
-  return Array.from(obstacles.values()).filter(Boolean).length
+  return [...obstacles.values()].filter(Boolean).length
 }
 
-function isLoop(map: string[][], startPos: Coords, startDir: Coords): boolean {
-  const startNextPos = move(startPos, startDir)
+function isLoop(
+  map: string[][],
+  startPos: Coords,
+  startDir: Direction
+): boolean {
+  const startNextPos = moveCoords(startPos, startDir)
   map[startNextPos[1]]![startNextPos[0]] = '#'
   const size = map.length - 1
   const visited: Set<string> = new Set()
@@ -61,9 +77,9 @@ function isLoop(map: string[][], startPos: Coords, startDir: Coords): boolean {
   let direction = turnRight(startDir)
   let nextPos: Coords
   while (true) {
-    nextPos = move(next, direction)
-    const posDirKey = getPosDirKey(nextPos, direction)
-    if (!isValidPos(nextPos, size) || visited.has(posDirKey)) {
+    nextPos = moveCoords(next, direction)
+    const posDirKey = getCoordsDirKey(nextPos, direction)
+    if (!areCoordsValid(nextPos, size) || visited.has(posDirKey)) {
       break
     }
     const item = map[nextPos[1]]![nextPos[0]]
@@ -75,25 +91,7 @@ function isLoop(map: string[][], startPos: Coords, startDir: Coords): boolean {
     }
   }
   map[startNextPos[1]]![startNextPos[0]] = '.'
-  return isValidPos(nextPos, size)
+  return areCoordsValid(nextPos, size)
 }
 
-type Coords = [number, number]
-
-const isValidPos = (pos: Coords, size: number): boolean =>
-  isBetween(pos[0], [0, size]) && isBetween(pos[1], [0, size])
-
-const arePosSame = (pos1: Coords, pos2: Coords): boolean =>
-  getPosKey(pos1) === getPosKey(pos2)
-
-const getPosKey = (pos: Coords): string => `${pos[0]}:${pos[1]}`
-
-const getPosDirKey = (pos: Coords, dir: Coords): string =>
-  `${getPosKey(pos)}|${getPosKey(dir)}`
-
-const move = (pos: Coords, dir: Coords): Coords => [
-  pos[0] + dir[0],
-  pos[1] + dir[1]
-]
-
-const turnRight = (dir: Coords): Coords => [-dir[1], dir[0]]
+const turnRight = (dir: Direction) => [-dir[1], dir[0]] as Direction

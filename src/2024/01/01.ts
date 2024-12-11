@@ -1,15 +1,14 @@
+import { toNumGrid } from '@/utils'
+
 export function parse(input: string) {
-  return input
-    .split('\n')
-    .map(line => line.match(/\d+/g)!.map(Number))
-    .reduce(
-      (lists, [left, right]) => {
-        lists.left.push(left!)
-        lists.right.push(right!)
-        return lists
-      },
-      { left: [] as number[], right: [] as number[] }
-    )
+  return toNumGrid(input).reduce(
+    (lists, [left, right]) => {
+      lists.left.push(left!)
+      lists.right.push(right!)
+      return lists
+    },
+    { left: [] as number[], right: [] as number[] }
+  )
 }
 
 export function partOne(input: ReturnType<typeof parse>) {
