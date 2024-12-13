@@ -37,8 +37,17 @@ export const getCoordsKey = (coords: Coords) => `${coords[0]}:${coords[1]}`
 export const getCoordsDirKey = (coords: Coords, dir: Direction) =>
   `${getCoordsKey(coords)}|${getCoordsKey(dir)}`
 
+export const parseCoordsKey = (coordsKey: string): Coords =>
+  coordsKey.split(':').map(Number) as Coords
+
 export const areCoordsSame = (a: Coords, b: Coords) =>
   a[0] === b[0] && a[1] === b[1]
+
+export const areDirsSame = (a: Direction, b: Direction) =>
+  a[0] === b[0] && a[1] === b[1]
+
+export const getOppositeDirection = (dir: Direction): Direction =>
+  [-dir[0], -dir[1]] as Direction
 
 export const areCoordsValid = (coords: Coords, size: number) =>
   isBetween(coords[0], [0, size]) && isBetween(coords[1], [0, size])
@@ -47,3 +56,8 @@ export const moveCoords = (coords: Coords, dir: Direction): Coords => [
   coords[0] + dir[0],
   coords[1] + dir[1]
 ]
+
+export const turnRight = (dir: Direction) => [-dir[1], dir[0]] as Direction
+
+export const turnRightDiagonally = (dir: Direction): Direction =>
+  [dir[0] - dir[1], dir[1] + dir[0]] as Direction

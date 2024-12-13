@@ -6,7 +6,8 @@ import {
   getCoordsDirKey,
   getCoordsKey,
   moveCoords,
-  toCharGrid
+  toCharGrid,
+  turnRight
 } from '@/utils'
 
 export function parse(input: string) {
@@ -93,5 +94,3 @@ function isLoop(
   map[startNextPos[1]]![startNextPos[0]] = '.'
   return areCoordsValid(nextPos, size)
 }
-
-const turnRight = (dir: Direction) => [-dir[1], dir[0]] as Direction

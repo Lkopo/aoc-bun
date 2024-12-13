@@ -3,6 +3,7 @@ import {
   Coords,
   directions4,
   getCoordsKey,
+  moveCoords,
   sum,
   toDigitGrid
 } from '@/utils'
@@ -49,7 +50,7 @@ function setPossiblePaths(
     return
   }
   for (const dir of directions4) {
-    const nextCoords: Coords = [coords[0] + dir[0], coords[1] + dir[1]]
+    const nextCoords: Coords = moveCoords(coords, dir)
     if (areCoordsValid(nextCoords, map.length - 1)) {
       const nextValue = map[nextCoords[1]]![nextCoords[0]]
       if (nextValue === currentValue + 1) {
