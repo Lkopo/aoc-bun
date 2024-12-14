@@ -2,12 +2,12 @@ import {
   areCoordsSame,
   areCoordsValid,
   Coords,
-  Direction,
-  getCoordsDirKey,
+  getCoordsVectKey,
   getCoordsKey,
   moveCoords,
   toCharGrid,
-  turnRight
+  turnRight,
+  Vector
 } from '@/utils'
 
 export function parse(input: string) {
@@ -20,7 +20,7 @@ export function parse(input: string) {
 export function partOne(input: ReturnType<typeof parse>) {
   const size = input.map.length - 1
   const visited: Set<string> = new Set([getCoordsKey(input.startPos)])
-  let direction: Direction = [0, -1]
+  let direction: Vector = [0, -1]
   let next = input.startPos
   while (true) {
     const nextPos = moveCoords(next, direction)
@@ -42,7 +42,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
   const obstacles: Map<string, boolean> = new Map()
   const size = input.map.length - 1
   let next = input.startPos
-  let direction: Direction = [0, -1]
+  let direction: Vector = [0, -1]
   while (true) {
     const nextPos = moveCoords(next, direction)
     if (!areCoordsValid(nextPos, size)) {
@@ -65,21 +65,17 @@ export function partTwo(input: ReturnType<typeof parse>) {
   return [...obstacles.values()].filter(Boolean).length
 }
 
-function isLoop(
-  map: string[][],
-  startPos: Coords,
-  startDir: Direction
-): boolean {
-  const startNextPos = moveCoords(startPos, startDir)
+function isLoop(map: string[][], startPos: Coords, startVect: Vector): boolean {
+  const startNextPos = moveCoords(startPos, startVect)
   map[startNextPos[1]]![startNextPos[0]] = '#'
   const size = map.length - 1
   const visited: Set<string> = new Set()
   let next = startPos
-  let direction = turnRight(startDir)
+  let direction = turnRight(startVect)
   let nextPos: Coords
   while (true) {
     nextPos = moveCoords(next, direction)
-    const posDirKey = getCoordsDirKey(nextPos, direction)
+    const posDirKey = getCoordsVectKey(nextPos, direction)
     if (!areCoordsValid(nextPos, size) || visited.has(posDirKey)) {
       break
     }

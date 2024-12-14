@@ -4,7 +4,8 @@ import {
   isBetween,
   positiveModulo,
   product,
-  Range
+  Range,
+  Vector
 } from '@/utils'
 
 export function parse(input: string) {
@@ -75,7 +76,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
 }
 
 type Quadrant = [Range, Range]
-type Robot = { p: Coords; v: Coords; q: number }
+type Robot = { p: Coords; v: Vector; q: number }
 
 const moveRobot = (
   robot: Robot,

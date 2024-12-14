@@ -1,3 +1,5 @@
+import { Range } from '@/utils'
+
 export function parse(input: string) {
   return input.split('').reduce(
     (disk, char, idx) => {
@@ -24,9 +26,9 @@ export function parse(input: string) {
     {
       breakdown: [] as string[],
       gaps: [] as number[],
-      gapsRanges: [] as [number, number][],
+      gapsRanges: [] as Range[],
       blocks: [] as number[],
-      blocksRanges: [] as [number, number][]
+      blocksRanges: [] as Range[]
     }
   )
 }
@@ -64,7 +66,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
     }
   }
   return input.breakdown.reduce(
-    (total, char, idx) => total + (char === '.' ? 0 : parseInt(char) * idx),
+    (total, char, idx) => total + (char === '.' ? 0 : Number(char) * idx),
     0
   )
 }

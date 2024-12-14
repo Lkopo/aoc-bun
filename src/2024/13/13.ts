@@ -1,4 +1,4 @@
-import { Coords, sum } from '@/utils'
+import { Coords, sum, Vector } from '@/utils'
 
 export function parse(input: string) {
   return input.split('\n\n').map(lines => {
@@ -25,7 +25,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
   )
 }
 
-type MachineSetup = { a: Coords; b: Coords; prize: Coords }
+type MachineSetup = { a: Vector; b: Vector; prize: Coords }
 
 const calculateTokens = (machines: MachineSetup[]): number =>
   machines

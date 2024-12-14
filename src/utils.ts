@@ -10,7 +10,7 @@ export const toDigitGrid = (input: string) =>
 export type Range = [number, number]
 
 export const positiveModulo = (value: number, modulus: number) =>
-  ((value % modulus) + modulus) % modulus
+  (modulus + value % modulus) % modulus
 
 export const isBetween = (x: number, [min, max]: Range) => x >= min && x <= max
 
@@ -20,16 +20,16 @@ export const product = (total: number, value: number) => total * value
 
 export type Coords = [number, number]
 
-export type Direction = [-1 | 0 | 1, -1 | 0 | 1]
+export type Vector = [number, number]
 
-export const directions4: Direction[] = [
+export const directions4: Vector[] = [
   [0, 1],
   [-1, 0],
   [0, -1],
   [1, 0]
 ]
 
-export const directions8: Direction[] = [
+export const directions8: Vector[] = [
   [1, 1],
   [-1, -1],
   [1, -1],
@@ -42,8 +42,8 @@ export const getCoordsKey = (coords: Coords) => `${coords[0]}:${coords[1]}`
 export const getCoordsNumKey = (coords: Coords) =>
   coords[0] * 1000000000000 + coords[1]
 
-export const getCoordsDirKey = (coords: Coords, dir: Direction) =>
-  `${getCoordsKey(coords)}|${getCoordsKey(dir)}`
+export const getCoordsVectKey = (coords: Coords, vector: Vector) =>
+  `${getCoordsKey(coords)}|${getCoordsKey(vector)}`
 
 export const parseCoordsKey = (coordsKey: string): Coords =>
   coordsKey.split(':').map(Number) as Coords
@@ -51,21 +51,21 @@ export const parseCoordsKey = (coordsKey: string): Coords =>
 export const areCoordsSame = (a: Coords, b: Coords) =>
   a[0] === b[0] && a[1] === b[1]
 
-export const areDirsSame = (a: Direction, b: Direction) =>
+export const areVectorsSame = (a: Vector, b: Vector) =>
   a[0] === b[0] && a[1] === b[1]
 
-export const getOppositeDirection = (dir: Direction): Direction =>
-  [-dir[0], -dir[1]] as Direction
+export const getOppositeVector = (vector: Vector): Vector =>
+  [-vector[0], -vector[1]] as Vector
 
 export const areCoordsValid = (coords: Coords, size: number) =>
   isBetween(coords[0], [0, size]) && isBetween(coords[1], [0, size])
 
-export const moveCoords = (coords: Coords, dir: Direction): Coords => [
-  coords[0] + dir[0],
-  coords[1] + dir[1]
+export const moveCoords = (coords: Coords, vector: Vector): Coords => [
+  coords[0] + vector[0],
+  coords[1] + vector[1]
 ]
 
-export const turnRight = (dir: Direction) => [-dir[1], dir[0]] as Direction
+export const turnRight = (vector: Vector) => [-vector[1], vector[0]] as Vector
 
-export const turnRightDiagonally = (dir: Direction): Direction =>
-  [dir[0] - dir[1], dir[1] + dir[0]] as Direction
+export const turnRightDiagonally = (vector: Vector): Vector =>
+  [vector[0] - vector[1], vector[1] + vector[0]] as Vector
