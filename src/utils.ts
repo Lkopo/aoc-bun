@@ -10,7 +10,7 @@ export const toDigitGrid = (input: string) =>
 export type Range = [number, number]
 
 export const positiveModulo = (value: number, modulus: number) =>
-  (modulus + value % modulus) % modulus
+  (modulus + (value % modulus)) % modulus
 
 export const isBetween = (x: number, [min, max]: Range) => x >= min && x <= max
 

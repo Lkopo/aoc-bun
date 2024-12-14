@@ -50,7 +50,6 @@ export function partOne(input: ReturnType<typeof parse>) {
 
 export function partTwo(input: ReturnType<typeof parse>) {
   const [width, height, seconds] = [101, 103, 10000]
-  const printResult = false // set to true for debugging
   for (let s = 1; s < seconds; ++s) {
     const positions = new Set(
       input.map(robot => {
@@ -58,19 +57,8 @@ export function partTwo(input: ReturnType<typeof parse>) {
         return getCoordsNumKey(robot.p)
       })
     )
-    for (let y = 0; y < height; ++y) {
-      let row = ''
-      for (let x = 0; x < width; ++x) {
-        row += positions.has(getCoordsNumKey([x, y])) ? '#' : '.'
-      }
-      if (printResult) {
-        console.log(row)
-      } else if (row.includes('###############################')) {
-        return s
-      }
-    }
-    if (printResult) {
-      console.log(s.toString())
+    if (positions.size === input.length) {
+      return s
     }
   }
 }
