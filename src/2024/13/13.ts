@@ -4,9 +4,9 @@ export function parse(input: string) {
   return input.split('\n\n').map(lines => {
     const [buttonA, buttonB, prize] = lines.split('\n')
     return {
-      a: buttonA!.match(/\d+/g)!.map(Number) as Coords,
-      b: buttonB!.match(/\d+/g)!.map(Number) as Coords,
-      prize: prize!.match(/\d+/g)!.map(Number) as Coords
+      a: buttonA!.match(/\d+/g)!.map(Number),
+      b: buttonB!.match(/\d+/g)!.map(Number),
+      prize: prize!.match(/\d+/g)!.map(Number)
     } as MachineSetup
   })
 }

@@ -7,14 +7,19 @@ export const toNumGrid = (input: string) =>
 export const toDigitGrid = (input: string) =>
   input.split('\n').map(line => line.split('').map(Number))
 
-export const isBetween = (x: number, [min, max]: [number, number]) =>
-  x >= min && x <= max
+export type Range = [number, number]
+
+export const positiveModulo = (value: number, modulus: number) =>
+  ((value % modulus) + modulus) % modulus
+
+export const isBetween = (x: number, [min, max]: Range) => x >= min && x <= max
 
 export const sum = (total: number, value: number) => total + value
 
 export const product = (total: number, value: number) => total * value
 
 export type Coords = [number, number]
+
 export type Direction = [-1 | 0 | 1, -1 | 0 | 1]
 
 export const directions4: Direction[] = [
@@ -33,6 +38,9 @@ export const directions8: Direction[] = [
 ]
 
 export const getCoordsKey = (coords: Coords) => `${coords[0]}:${coords[1]}`
+
+export const getCoordsNumKey = (coords: Coords) =>
+  coords[0] * 1000000000000 + coords[1]
 
 export const getCoordsDirKey = (coords: Coords, dir: Direction) =>
   `${getCoordsKey(coords)}|${getCoordsKey(dir)}`
