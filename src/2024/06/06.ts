@@ -7,14 +7,13 @@ import {
   moveCoords,
   toCharGrid,
   turnRight,
-  Vector
+  Vector,
+  getStartCoords
 } from '@/utils'
 
 export function parse(input: string) {
   const map = toCharGrid(input)
-  const y = map.findIndex(row => row.includes('^'))
-  const startPos: Coords = [map[y]!.indexOf('^'), y]
-  return { map, startPos }
+  return { map, startPos: getStartCoords(map, '^') }
 }
 
 export function partOne(input: ReturnType<typeof parse>) {
