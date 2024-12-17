@@ -80,7 +80,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
     if (
       futureValue !== '#' &&
       (!futureBox ||
-        moveBoxesV2(input.extendedMap, futureBox, instruction, boxMap, boxes))
+        moveBoxesV2(input.extendedMap, futureBox, instruction, boxMap))
     ) {
       robotCoords = futureCoords
     }
@@ -124,38 +124,55 @@ const moveBoxesV2 = (
   map: string[][],
   box: Box,
   dirSign: DirectionSign,
-  boxMap: Map<string, Box>,
-  boxes: Set<Box>
+  boxMap: Map<string, Box>
 ): boolean => {
   if (!isMovePossible(box, dirSign)) {
     return false
   }
 
   const processedBoxes = new Set<Box>()
+  const boxesToScan = new Set<Box>()
   const queue = [box]
 
   while (queue.length) {
     const box = queue.pop()!
     if (processedBoxes.has(box)) continue
     processedBoxes.add(box)
+    boxesToScan.add(box)
 
     boxMap.delete(getCoordsKey(box.coords))
     boxMap.delete(getCoordsKey([box.coords[0] + 1, box.coords[1]]))
     box.coords = moveCoords(box.coords, directionSignMap[dirSign])
 
+    Object.keys(directionSignMap).forEach(sign => {
+      const nextCoords = moveCoords(
+        box.coords,
+        directionSignMap[sign as DirectionSign]
+      )
+      const nextCoordsKey = getCoordsKey(nextCoords)
+      boxMap.has(nextCoordsKey) && boxesToScan.add(boxMap.get(nextCoordsKey)!)
+      if (sign !== '<') {
+        const rightCoordsKey = getCoordsKey([nextCoords[0] + 1, nextCoords[1]])
+        boxMap.has(rightCoordsKey) &&
+          boxesToScan.add(boxMap.get(rightCoordsKey)!)
+      }
+      if (sign === 'v' || sign === '^') {
+        const [left, right] = box[sign]
+        typeof left === 'object' && boxesToScan.add(left)
+        typeof right === 'object' && boxesToScan.add(right)
+      } else {
+        const neighbor = box[sign as '<' | '>']
+        typeof neighbor === 'object' && boxesToScan.add(neighbor)
+      }
+    })
+
     if (dirSign === 'v' || dirSign === '^') {
       const [left, right] = box[dirSign]
-      if (typeof left === 'object') {
-        queue.push(left)
-      }
-      if (left !== right && typeof right === 'object') {
-        queue.push(right)
-      }
+      typeof left === 'object' && queue.push(left)
+      left !== right && typeof right === 'object' && queue.push(right)
     } else {
       const neighbor = box[dirSign]
-      if (typeof neighbor === 'object') {
-        queue.push(neighbor)
-      }
+      typeof neighbor === 'object' && queue.push(neighbor)
     }
   }
 
@@ -163,7 +180,7 @@ const moveBoxesV2 = (
     boxMap.set(getCoordsKey(box.coords), box)
     boxMap.set(getCoordsKey([box.coords[0] + 1, box.coords[1]]), box)
   })
-  boxes.forEach(box => scanBoxSurroundings(map, box, boxMap))
+  boxesToScan.forEach(box => scanBoxSurroundings(map, box, boxMap))
 
   return true
 }
