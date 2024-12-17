@@ -17,18 +17,32 @@ export function partOne(input: ReturnType<typeof parse>) {
 
 export function partTwo(input: ReturnType<typeof parse>) {
   const expectedResult = input.program.join(',')
-  let initialA = 0n
-  while (true) {
-    input.a = initialA
+  const candidates: number[] = []
+  const queue: bigint[] = []
+  const processed = new Set<bigint>()
+  for (let i = 0n; i < 8n; ++i) {
+    input.a = i
     const result = execute(input)
-    if (result === expectedResult) {
-      return initialA
+    if (expectedResult.endsWith(result)) {
+      queue.push(i)
     }
-    initialA =
-      initialA !== 0n && expectedResult.endsWith(result)
-        ? initialA * 8n
-        : initialA + 1n
   }
+  while (queue.length) {
+    const initialA = queue.pop()!
+    if (processed.has(initialA)) continue
+    processed.add(initialA)
+    for (let i = 0n; i < 8n; ++i) {
+      const newA = initialA * 8n + i
+      input.a = newA
+      const result = execute(input)
+      if (result === expectedResult) {
+        candidates.push(Number(newA))
+      } else if (expectedResult.endsWith(result)) {
+        queue.push(newA)
+      }
+    }
+  }
+  return Math.min(...candidates)
 }
 
 type Computer = { a: bigint; b: bigint; c: bigint; program: number[] }
