@@ -16,40 +16,31 @@ export function parse(input: string) {
 }
 
 export function partOne(input: ReturnType<typeof parse>) {
-  return solveMaze(70, new Set(input.slice(0, 1024))).minDistance
+  return getMinDistance(70, new Set(input.slice(0, 1024)))
 }
 
 export function partTwo(input: ReturnType<typeof parse>) {
-  const corruptedBytes = new Set(input.slice(0, 1025))
-  let i = 0
-  let solvedMaze = solveMaze(70, corruptedBytes)
-  let nextCorruptedByte = input[1024]
-  while (solvedMaze.winner !== null) {
-    const winningPath = new Set<string>()
-    for (
-      let current = solvedMaze.winner;
-      current !== null;
-      current = current.previous!
-    ) {
-      winningPath.add(getCoordsKey(current.coords))
+  let left = 1024
+  let right = input.length - 1
+  while (left < right - 1) {
+    const middle = Math.floor((left + right) / 2)
+    const corruptedBytes = new Set(input.slice(0, middle))
+    if (getMinDistance(70, corruptedBytes) === Infinity) {
+      right = middle
+    } else {
+      left = middle
     }
-    do {
-      nextCorruptedByte = input[1024 + ++i]!
-      corruptedBytes.add(nextCorruptedByte)
-    } while (!winningPath.has(nextCorruptedByte))
-    solvedMaze = solveMaze(70, corruptedBytes)
   }
-  return nextCorruptedByte!.replace(':', ',')
+  return input[left]!.replace(':', ',')
 }
 
-const solveMaze = (wh: number, corrupted: Set<string>) => {
+const getMinDistance = (wh: number, corruptedBytes: Set<string>) => {
   const queue = new Heap<Step>(
     (stepA, stepB) => stepA.distance - stepB.distance
   )
   const visited = new Set<number>()
   let minDistance = Infinity
-  let winner: Step | null = null
-  queue.push({ coords: [0, 0], distance: 0, previous: null })
+  queue.push({ coords: [0, 0], distance: 0 })
   while (!queue.isEmpty()) {
     const step = queue.pop()!
     if (step.distance >= minDistance) continue
@@ -57,31 +48,20 @@ const solveMaze = (wh: number, corrupted: Set<string>) => {
     if (visited.has(coordsKey)) continue
     visited.add(coordsKey)
     if (areCoordsSame([wh, wh], step.coords)) {
-      if (step.distance < minDistance) {
-        minDistance = step.distance
-        winner = step
-      }
+      minDistance = Math.min(minDistance, step.distance)
       continue
     }
     directions4.forEach(direction => {
       const nextCoords = moveCoords(step.coords, direction)
       if (
-        !corrupted.has(getCoordsKey(nextCoords)) &&
+        !corruptedBytes.has(getCoordsKey(nextCoords)) &&
         areCoordsValid(nextCoords, wh)
       ) {
-        queue.push({
-          coords: nextCoords,
-          distance: step.distance + 1,
-          previous: step
-        })
+        queue.push({ coords: nextCoords, distance: step.distance + 1 })
       }
     })
   }
-  return { minDistance, winner }
+  return minDistance
 }
 
-type Step = {
-  coords: Coords
-  distance: number
-  previous: Step | null
-}
+type Step = { coords: Coords; distance: number }
