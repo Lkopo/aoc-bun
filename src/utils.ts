@@ -39,8 +39,7 @@ export const directions8: Vector[] = [
 
 export const getCoordsKey = (coords: Coords) => `${coords[0]}:${coords[1]}`
 
-export const getCoordsNumKey = (coords: Coords) =>
-  coords[0] * 1000000000000 + coords[1]
+export const getCoordsNumKey = (coords: Coords) => coords[0] * 10000 + coords[1]
 
 export const getCoordsVectKey = (coords: Coords, vector: Vector) =>
   `${getCoordsKey(coords)}|${getCoordsKey(vector)}`
