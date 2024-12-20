@@ -64,7 +64,7 @@ export const moveCoords = (coords: Coords, vector: Vector): Coords => [
   coords[1] + vector[1]
 ]
 
-export const getStartCoords = (grid: string[][], char: string): Coords => {
+export const getCharCoords = (grid: string[][], char: string): Coords => {
   const y = grid.findIndex(row => row.includes(char))
   return [grid[y]!.indexOf(char), y]
 }

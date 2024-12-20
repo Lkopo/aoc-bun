@@ -2,7 +2,7 @@ import {
   Coords,
   getCoordsNumKey,
   getCoordsVectKey,
-  getStartCoords,
+  getCharCoords,
   moveCoords,
   toCharGrid,
   turnRight,
@@ -12,7 +12,7 @@ import Heap from 'heap-js'
 
 export function parse(input: string) {
   const map = toCharGrid(input)
-  return { map, startCoords: getStartCoords(map, 'S') }
+  return { map, startCoords: getCharCoords(map, 'S') }
 }
 
 export function partOne(input: ReturnType<typeof parse>) {

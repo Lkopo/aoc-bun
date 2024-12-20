@@ -1,7 +1,7 @@
 import {
   Coords,
   getCoordsKey,
-  getStartCoords,
+  getCharCoords,
   moveCoords,
   toCharGrid,
   Vector
@@ -20,8 +20,8 @@ export function parse(input: string) {
   return {
     map: map,
     extendedMap: extendedMap,
-    startCoords: getStartCoords(map, '@'),
-    startCoordsExtended: getStartCoords(extendedMap, '@'),
+    startCoords: getCharCoords(map, '@'),
+    startCoordsExtended: getCharCoords(extendedMap, '@'),
     instructions: instructions!
       .split('\n')
       .join('')

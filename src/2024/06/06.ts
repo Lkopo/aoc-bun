@@ -8,12 +8,12 @@ import {
   toCharGrid,
   turnRight,
   Vector,
-  getStartCoords
+  getCharCoords
 } from '@/utils'
 
 export function parse(input: string) {
   const map = toCharGrid(input)
-  return { map, startPos: getStartCoords(map, '^') }
+  return { map, startPos: getCharCoords(map, '^') }
 }
 
 export function partOne(input: ReturnType<typeof parse>) {
