@@ -1,3 +1,4 @@
+import Queue from '@/queue'
 import {
   areCoordsValid,
   Coords,
@@ -32,10 +33,11 @@ const getCheatDistances = (map: string[][], maxCheatLength: number) => {
       if (tile === '#') return
       const startKey = getCoordsNumKey([x, y])
       const startDist = startDistMap.get(startKey)!
-      const queue = [{ coords: [x, y] as Coords, steps: 0 }]
+      const queue = new Queue<{ coords: Coords; steps: number }>()
+      queue.enqueue({ coords: [x, y] as Coords, steps: 0 })
       const visited = new Set<number>()
-      while (queue.length) {
-        const { coords, steps } = queue.shift()!
+      while (!queue.isEmpty()) {
+        const { coords, steps } = queue.dequeue()!
         const coordsKey = getCoordsNumKey(coords)
         if (visited.has(coordsKey)) continue
         visited.add(coordsKey)
@@ -53,7 +55,7 @@ const getCheatDistances = (map: string[][], maxCheatLength: number) => {
               !visited.has(nextKey) &&
               areCoordsValid(nextCoords, map.length - 1)
             ) {
-              queue.push({ coords: nextCoords, steps: steps + 1 })
+              queue.enqueue({ coords: nextCoords, steps: steps + 1 })
             }
           }
         }
@@ -64,11 +66,12 @@ const getCheatDistances = (map: string[][], maxCheatLength: number) => {
 }
 
 const buildDistMapForCoords = (map: string[][], coords: Coords) => {
-  const queue = [{ coords: coords, distance: 0 }]
+  const queue = new Queue<{ coords: Coords; distance: number }>()
+  queue.enqueue({ coords, distance: 0 })
   const visited = new Set<number>()
   const distMap = new Map<number, number>()
-  while (queue.length) {
-    const { coords, distance } = queue.shift()!
+  while (!queue.isEmpty()) {
+    const { coords, distance } = queue.dequeue()!
     const key = getCoordsNumKey(coords)
     visited.add(key)
     distMap.set(key, distance)
@@ -78,7 +81,7 @@ const buildDistMapForCoords = (map: string[][], coords: Coords) => {
         !visited.has(getCoordsNumKey(nextCoords)) &&
         map[nextCoords[1]]![nextCoords[0]] !== '#'
       ) {
-        queue.push({ coords: nextCoords, distance: distance + 1 })
+        queue.enqueue({ coords: nextCoords, distance: distance + 1 })
       }
     }
   }
