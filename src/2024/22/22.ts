@@ -32,10 +32,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
       prevDigit = digit
     }
   })
-  return sequenceMap
-    .entries()
-    .toArray()
-    .sort(([, a], [, b]) => b - a)[0]![1]
+  return Math.max(...sequenceMap.values())
 }
 
 const calculateSecret = (secret: number) => {
