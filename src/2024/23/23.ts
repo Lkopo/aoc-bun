@@ -31,10 +31,10 @@ export function partTwo(input: ReturnType<typeof parse>) {
   return input.entries().reduce(
     (winner, [pc, connectedPcs]) => {
       const pcsToCheck = [...connectedPcs].sort().filter(cpc => cpc > pc)
-      while (pcsToCheck.length > 1) {
-        const pcToCheck = pcsToCheck.shift()!
+      for (const pcToCheck of pcsToCheck) {
         const interconnected = new Set([pcToCheck])
         for (const candidate of pcsToCheck) {
+          if (candidate === pcToCheck) continue
           if (
             [...interconnected].every(interPc =>
               input.get(interPc)!.has(candidate)
@@ -45,7 +45,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
         }
         if (interconnected.size > winner.max) {
           winner.max = interconnected.size
-          winner.password = [pc, ...interconnected].join(',')
+          winner.password = [pc, ...interconnected].sort().join(',')
         }
       }
       return winner
