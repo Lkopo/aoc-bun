@@ -39,15 +39,20 @@ const isValid = (id: string): boolean => {
 const isValidComplex = (id: string): boolean => {
   let sequence = ''
 
-  for (const char of id.split('')) {
-    sequence += char
+  for (let i = 0; i < id.length; ++i) {
+    sequence += id[i]
     if (sequence.length > id.length / 2) return true
     if (id.length % sequence.length !== 0) continue
-    const testId = sequence.repeat(id.length / sequence.length)
-
-    if (testId === id) return false
+    if (isRepeatedBy(id, sequence)) return false
   }
 
+  return true
+}
+
+const isRepeatedBy = (id: string, sequence: string): boolean => {
+  for (let i = 0; i < id.length; i++) {
+    if (id[i] !== sequence[i % sequence.length]) return false
+  }
   return true
 }
 
