@@ -57,6 +57,6 @@ const isRepeatedBy = (id: string, sequence: string): boolean => {
 }
 
 type Range = {
-  startId: number,
-  endId: number,
+  startId: number
+  endId: number
 }

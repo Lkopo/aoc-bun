@@ -1,4 +1,4 @@
-import { toDigitGrid } from "@/utils";
+import { toDigitGrid } from '@/utils'
 
 export function parse(input: string) {
   return toDigitGrid(input)
@@ -15,7 +15,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
 const getHighestJoltage = (bank: number[], batteries: number): number => {
   const batteryIdxs = new Array<number>(batteries).fill(0)
   for (let i = 0; i < batteryIdxs.length; ++i) {
-    const start = (batteryIdxs[i-1] ?? -1) + 1
+    const start = (batteryIdxs[i - 1] ?? -1) + 1
     const end = bank.length - batteries + i + 1
     for (let j = start, max = 0; j < end; ++j) {
       if (bank[j]! > max) {

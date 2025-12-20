@@ -9,7 +9,7 @@ describe('Day 2', () => {
       expect(partOne(parse(example))).toBe(1227775554)
     })
   })
-  
+
   describe('Part Two', () => {
     test('test input', () => {
       expect(partTwo(parse(example))).toBe(4174379265)
