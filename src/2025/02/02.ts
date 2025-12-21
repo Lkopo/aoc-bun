@@ -1,4 +1,4 @@
-import { Range } from "@/utils"
+import { Range } from '@/utils'
 
 export function parse(input: string) {
   return input.split(',').reduce((ranges, line) => {
@@ -9,8 +9,8 @@ export function parse(input: string) {
 }
 
 export function partOne(input: ReturnType<typeof parse>) {
-  return input.reduce((total, range) => {
-    for (let id = range[0]; id <= range[1]; ++id) {
+  return input.reduce((total, [min, max]) => {
+    for (let id = min; id <= max; ++id) {
       if (!isValid(String(id))) total += id
     }
     return total
@@ -18,8 +18,8 @@ export function partOne(input: ReturnType<typeof parse>) {
 }
 
 export function partTwo(input: ReturnType<typeof parse>) {
-  return input.reduce((total, range) => {
-    for (let id = range[0]; id <= range[1]; ++id) {
+  return input.reduce((total, [min, max]) => {
+    for (let id = min; id <= max; ++id) {
       if (!isValidComplex(String(id))) total += id
     }
     return total
