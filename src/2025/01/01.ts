@@ -16,13 +16,12 @@ export function partOne(input: ReturnType<typeof parse>) {
 export function partTwo(input: ReturnType<typeof parse>) {
   let dial = 50
   return input.reduce((total, rotation) => {
-    const nextDial = dial + rotation
     const roundFunc = rotation > 0 ? Math.ceil : Math.floor
-    dial = nextDial
+    dial += rotation
     return (
       total +
       Math.abs(
-        roundFunc(nextDial / 100) - roundFunc((nextDial - rotation) / 100)
+        roundFunc(dial / 100) - roundFunc((dial - rotation) / 100)
       )
     )
   }, 0)
