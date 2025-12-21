@@ -45,7 +45,7 @@ async function processDayInYear(day: number, year: number): Promise<number> {
   const { partOne, partTwo, parse } = await import(
     `@/${year}/${name}/${name}.ts`
   )
-  const sanitizedInput = input?.trim('\n') ?? ''
+  const sanitizedInput = input?.replace(/\n+$/, '') ?? ''
 
   const [one, onePerformance] = withPerformance(
     () => partOne?.(parse(sanitizedInput))
