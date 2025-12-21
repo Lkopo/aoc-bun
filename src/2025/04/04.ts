@@ -5,12 +5,12 @@ export function parse(input: string) {
 }
 
 export function partOne(input: ReturnType<typeof parse>) {
-  return input.reduce((total, rolls, idx) => {
-    rolls.forEach((roll, i) => {
+  return input.reduce((total, rolls, y) => {
+    rolls.forEach((roll, x) => {
       if (roll !== '@') return
-      const count = directions8.reduce((count, [x, y]) => {
-        const next = [idx + x, i + y]
-        return count + (input[next[0]!]?.[next[1]!] === '@' ? 1 : 0)
+      const count = directions8.reduce((count, [dx, dy]) => {
+        const next = [x + dx, y + dy]
+        return count + (input[next[1]!]?.[next[0]!] === '@' ? 1 : 0)
       }, 0)
       if (count < 4) ++total
     })
@@ -22,15 +22,15 @@ export function partTwo(input: ReturnType<typeof parse>) {
   let totalRemoved = 0
   let removed: number
   do {
-    removed = input.reduce((total, rolls, idx) => {
-      rolls.forEach((roll, i) => {
+    removed = input.reduce((total, rolls, y) => {
+      rolls.forEach((roll, x) => {
         if (roll !== '@') return
-        const count = directions8.reduce((count, [x, y]) => {
-          const next = [idx + x, i + y]
-          return count + (input[next[0]!]?.[next[1]!] === '@' ? 1 : 0)
+        const count = directions8.reduce((count, [dx, dy]) => {
+          const next = [x + dx, y + dy]
+          return count + (input[next[1]!]?.[next[0]!] === '@' ? 1 : 0)
         }, 0)
         if (count < 4) {
-          input[idx]![i]! = 'x'
+          input[y]![x]! = 'x'
           ++total
         }
       })
