@@ -20,9 +20,7 @@ export function partTwo(input: ReturnType<typeof parse>) {
     dial += rotation
     return (
       total +
-      Math.abs(
-        roundFunc(dial / 100) - roundFunc((dial - rotation) / 100)
-      )
+      Math.abs(roundFunc(dial / 100) - roundFunc((dial - rotation) / 100))
     )
   }, 0)
 }
