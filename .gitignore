@@ -7,6 +7,11 @@
 input.txt
 example.txt
 
+# LP files
+
+model.lp
+solution.txt
+
 # Logs
 
 logs
