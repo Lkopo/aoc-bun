@@ -37,8 +37,8 @@ export function partTwo(input: ReturnType<typeof parse>, simple = false) {
     (total, { desiredJoltages, buttons }) =>
       total +
       (simple
-        ? getMinJoltagePresses(desiredJoltages, buttons)
-        : solveLP(toLP(desiredJoltages, buttons))),
+        ? getMinJoltagePressesSimple(desiredJoltages, buttons)
+        : getMinJoltagePressesLP(desiredJoltages, buttons)),
     0
   )
 }
@@ -67,7 +67,7 @@ const getMinLightPresses = (
   return Infinity
 }
 
-const getMinJoltagePresses = (
+const getMinJoltagePressesSimple = (
   desiredJoltages: number[],
   buttons: number[][]
 ): number => {
@@ -98,7 +98,11 @@ const getMinJoltagePresses = (
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-const toLP = (desiredJoltages: number[], buttons: number[][]) => {
+// CBC required - brew install cbc
+const getMinJoltagePressesLP = (
+  desiredJoltages: number[],
+  buttons: number[][]
+): number => {
   const cols = Array.from({ length: buttons.length }, (_, i) => `x${i}`)
   const lines: string[] = []
   lines.push('Minimize')
@@ -116,11 +120,7 @@ const toLP = (desiredJoltages: number[], buttons: number[][]) => {
   lines.push('General')
   lines.push(' ' + cols.join(' '))
   lines.push('End')
-  return lines.join('\n')
-}
-
-// CBC required - brew install cbc
-const solveLP = (lp: string): number => {
+  const lp = lines.join('\n')
   const modelPath = join(__dirname, 'model.lp')
   const solutionPath = join(__dirname, 'solution.txt')
   writeFileSync(modelPath, lp)
