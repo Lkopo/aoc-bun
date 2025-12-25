@@ -73,3 +73,18 @@ export const turnRight = (vector: Vector) => [-vector[1], vector[0]] as Vector
 
 export const turnRightDiagonally = (vector: Vector): Vector =>
   [vector[0] - vector[1], vector[1] + vector[0]] as Vector
+
+export const memoize = <A extends any[], R, K>(
+  fn: (...args: A) => R,
+  keyOf: (...args: A) => K
+) => {
+  const cache = new Map<K, R>()
+  return (...args: A): R => {
+    const key = keyOf(...args)
+    const hit = cache.get(key)
+    if (hit !== undefined) return hit
+    const res = fn(...args)
+    cache.set(key, res)
+    return res
+  }
+}

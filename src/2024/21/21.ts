@@ -1,3 +1,5 @@
+import { memoize } from '@/utils'
+
 export function parse(input: string) {
   return input.split('\n')
 }
@@ -37,33 +39,26 @@ const geDirPadSequenceForCode = (code: string) => {
   )
 }
 
-const cache = new Map<string, number>()
-
-const getPathLength = (
-  start: DirPad,
-  end: DirPad,
-  depth: number,
-  maxDepth: number
-): number => {
-  const key = `${start}|${end}|${depth}|${maxDepth}`
-  if (cache.has(key)) return cache.get(key)!
-  const path = directionalPadPaths[start][end]
-  if (depth === maxDepth) return path.length
-  let newStart: DirPad = 'A'
-  const total = [...path].reduce(
-    (sum, newEnd) =>
-      sum +
-      getPathLength(
-        newStart,
-        (newStart = newEnd as DirPad),
-        depth + 1,
-        maxDepth
-      ),
-    0
-  )
-  cache.set(key, total)
-  return total
-}
+const getPathLength = memoize(
+  (start: DirPad, end: DirPad, depth: number, maxDepth: number): number => {
+    const path = directionalPadPaths[start][end]
+    if (depth === maxDepth) return path.length
+    let newStart: DirPad = 'A'
+    const total = [...path].reduce(
+      (sum, newEnd) =>
+        sum +
+        getPathLength(
+          newStart,
+          (newStart = newEnd as DirPad),
+          depth + 1,
+          maxDepth
+        ),
+      0
+    )
+    return total
+  },
+  (start, end, depth, maxDepth) => `${start}|${end}|${depth}|${maxDepth}`
+)
 
 type DirPad = '^' | 'A' | '<' | 'v' | '>'
 type NumPad = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'A'

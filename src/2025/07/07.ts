@@ -3,6 +3,7 @@ import {
   Coords,
   getCharCoords,
   getCoordsNumKey,
+  memoize,
   toCharGrid
 } from '@/utils'
 
@@ -24,28 +25,24 @@ export function partOne(input: ReturnType<typeof parse>) {
 }
 
 export function partTwo(input: ReturnType<typeof parse>) {
-  return getTimelines(getCharCoords(input, 'S'), input, new Map())
+  return getTimelines(getCharCoords(input, 'S'), input)
 }
 
-const getTimelines = (
-  [x, y]: Coords,
-  manifold: string[][],
-  cache: Map<number, number>
-): number => {
-  if (!areCoordsValid([x, y], manifold.length - 1)) return 0
-  const coordsKey = getCoordsNumKey([x, y])
-  if (cache.has(coordsKey)) return cache.get(coordsKey)!
-  for (let ny = y + 1; ny < manifold.length; ++ny) {
-    if (manifold[ny]![x] === '^') {
-      const timelines =
-        getTimelines([x - 1, ny], manifold, cache) +
-        getTimelines([x + 1, ny], manifold, cache)
-      cache.set(coordsKey, timelines)
-      return timelines
+const getTimelines = memoize(
+  ([x, y]: Coords, manifold: string[][]): number => {
+    if (!areCoordsValid([x, y], manifold.length - 1)) return 0
+    for (let ny = y + 1; ny < manifold.length; ++ny) {
+      if (manifold[ny]![x] === '^') {
+        const timelines =
+          getTimelines([x - 1, ny], manifold) +
+          getTimelines([x + 1, ny], manifold)
+        return timelines
+      }
     }
-  }
-  return 1
-}
+    return 1
+  },
+  coords => getCoordsNumKey(coords)
+)
 
 const canBeSplit = ([x, y]: Coords, manifold: string[][]): boolean => {
   for (let ny = y - 1; ny > 0; --ny) {

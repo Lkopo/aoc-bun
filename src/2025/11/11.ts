@@ -1,4 +1,5 @@
 import Queue from '@/queue'
+import { memoize } from '@/utils'
 
 export function parse(input: string) {
   return input.split('\n').reduce((schema, line) => {
@@ -29,34 +30,31 @@ export function partTwo(input: ReturnType<typeof parse>) {
   return getValidPathsCount(input, 'svr', false, false)
 }
 
-const cache = new Map<string, number>()
-
-const getValidPathsCount = (
-  schema: Map<string, string[]>,
-  device: string,
-  hasDac: boolean,
-  hasFft: boolean
-): number => {
-  const key = device + hasDac + hasFft
-  if (cache.has(key)) return cache.get(key)!
-  if (device === 'out') {
-    const result = hasDac && hasFft ? 1 : 0
-    cache.set(key, result)
+const getValidPathsCount = memoize(
+  (
+    schema: Map<string, string[]>,
+    device: string,
+    hasDac: boolean,
+    hasFft: boolean
+  ): number => {
+    if (device === 'out') {
+      const result = hasDac && hasFft ? 1 : 0
+      return result
+    }
+    const result = schema
+      .get(device)!
+      .reduce(
+        (total, next) =>
+          total +
+          getValidPathsCount(
+            schema,
+            next,
+            hasDac || next === 'dac',
+            hasFft || next === 'fft'
+          ),
+        0
+      )
     return result
-  }
-  const result = schema
-    .get(device)!
-    .reduce(
-      (total, next) =>
-        total +
-        getValidPathsCount(
-          schema,
-          next,
-          hasDac || next === 'dac',
-          hasFft || next === 'fft'
-        ),
-      0
-    )
-  cache.set(key, result)
-  return result
-}
+  },
+  (_, device, hasDac, hasFft) => device + hasDac + hasFft
+)

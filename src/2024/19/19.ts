@@ -1,4 +1,4 @@
-import { sum } from '@/utils'
+import { memoize, sum } from '@/utils'
 
 export function parse(input: string) {
   const [patternsPart, designsPart] = input.split('\n\n')
@@ -21,16 +21,16 @@ export function partTwo(input: ReturnType<typeof parse>) {
     .reduce(sum)
 }
 
-const cache = new Map<string, number>()
-const getPossibleDesignCount = (design: string, patterns: string[]): number => {
-  if (design === '') return 1
-  if (cache.has(design)) return cache.get(design)!
-  let result = 0
-  for (const pattern of patterns) {
-    if (design.startsWith(pattern)) {
-      result += getPossibleDesignCount(design.slice(pattern.length), patterns)
+const getPossibleDesignCount = memoize(
+  (design: string, patterns: string[]): number => {
+    if (design === '') return 1
+    let result = 0
+    for (const pattern of patterns) {
+      if (design.startsWith(pattern)) {
+        result += getPossibleDesignCount(design.slice(pattern.length), patterns)
+      }
     }
-  }
-  cache.set(design, result)
-  return result
-}
+    return result
+  },
+  design => design
+)
